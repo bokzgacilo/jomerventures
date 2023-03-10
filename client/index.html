@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/jomer-seal.png" type="image/x-icon">
+    <title>JomerVentures</title>
+    <link rel="stylesheet" href="css/base.css">
+    <script src='https://js.stripe.com/v3/'></script>
+    <script src="js/jquery-3.6.3.min.js"></script> 
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script> 
+    <script src="js/sweetalert2@11.js"></script>
+    <script src="js/forms.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/modals.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AXk1EAEmYo3KCw6a33wvY3xRFIutdhrla93gxUHOvzAn5SEIygUoe-Zx3dsswlMomNN5NVPv2KsUALRQ&currency=EUR"></script>
+    <script src="js/paypal-controller.js"></script>
+</head>
+<body>
+  <div class="loading-spinner">
+    <span class="loader"></span>
+    <h5 class="is-size-4">Loading..</h5>
+  </div>
+
+  <div class="loading-spinner-initialize">
+    <span class="loader"></span>
+    <h5 class="is-size-4 mt-4">Fetching resources from the server..</h5>
+    <h5 class="is-size-6 mt-3">(Includes promos, scripts, images and datasets)</h5>
+  </div>
+
+  <div class="chat-support closed-chat">
+    <div class="chat-header">
+      <i onclick='openChat()' class="fa-solid fa-messages"></i>
+      <p onclick='openChat()'>Start Chatting</p>
+      <i id='chat-button-controller' onclick='closeChat()' style='margin-left: auto;' class="fa-solid fa-chevron-up"></i>
+    </div>
+    <div class="chat-body">
+
+    </div>
+  </div>
+
+  <!-- Tour Detail Modal -->
+  <div id="tourDetail" class="bok-modal">
+    <div class="bok-content w-50">
+      
+    </div>
+  </div>
+
+  <!-- Manage Booking Modal -->
+  <div id="manageBooking" class="bok-modal">
+    <div class="bok-content" >
+      <div class="bok-header">
+        <h4 class="is-size-4">Manage Booking</h4>
+        <i onclick='closeModal()' class="fa-solid fa-x"></i>
+      </div>
+      <div class="bok-body" id="myBookings">
+        <div class="w-100">
+          <h4 class="is-size-6 mb-3">Email</h4>
+          <input type="email" required id="manage_email" class="input mb-2" placeholder="juan.delacruz@gmail.com">
+          <h4 class="is-size-6 mb-3 mt-4">Booking Reference Number</h4>
+          <input type="number" required id="manage_referenceNumber" class="input mb-4" placeholder="123456">
+          <button onclick="searchReferenceNumber()" class="button w-100">Continue as Guest</button>
+        </div>
+        <button onclick="continueAsMember()" class="button is-primary mt-4 w-100">Continue as Member</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Setup Modal -->
+  <div id="accountSetting" class="bok-modal">
+    <div class="bok-content">
+      <div class="bok-header">
+        <h4 class="is-size-3">Account Setting</h4>
+        <i onclick='closeModal()' class="fa-solid fa-x"></i>
+      </div>
+      <div class="bok-body">
+        <form id="accountSetupForm" class="w-100">
+          
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settle Payment GCash -->
+  <div id="settlePaymentGCash" class="bok-modal">
+    <div class="bok-content">
+      <div class="bok-header">
+        <h4 class="is-size-4">Settle Payment - GCASH</h4>
+        <i onclick='closeModal()' class="fa-solid fa-x"></i>
+      </div>
+      <div id="settlePayment" class="bok-body">
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Travel -->
+  <div id='travelDateDiv' class='bok-modal updModal'>
+    <div class='bok-content'>
+      <div class='bok-header'>
+        <h4 class='is-size-4'>Update Travel Date</h4>
+        <i onclick='closeUpdateModal()' class='fa-solid fa-x'></i>
+      </div>
+      <div id='travelDate' class='bok-body'>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Pickup Poin -->
+  <div id='pickupPointDiv' class='bok-modal updModal'>
+    <div class='bok-content'>
+      <div class='bok-header'>
+        <h4 class='is-size-4'>Update Pickup Point</h4>
+        <i onclick='closeUpdateModal()' class='fa-solid fa-x'></i>
+      </div>
+      <div id='pickupPoint' class='bok-body'>
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- Update Guest Details -->
+  <div id='guestDetailsDiv' class='bok-modal updModal'>
+    <div class='bok-content'>
+      <div class='bok-header'>
+        <h4 class='is-size-4'>Update Guest Details</h4>
+        <i onclick='closeUpdateModal()' class='fa-solid fa-x'></i>
+      </div>
+      <div id='guestDetails' class='bok-body'>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Tour -->
+  <div id="searchTour" class="bok-modal">
+    <div class="bok-content w-50">
+      <div class="bok-header">
+        <h4 class="is-size-3">Search Tour</h4>
+        <i onclick='closeModal()' class="fa-solid fa-x"></i>
+      </div>
+      <div class="bok-body">
+        <form id='searchAgainForm' class=" w-100 mb-4">
+          <div class="select is-small">
+            <select required id="again_tour_month">
+              <option>January</option>
+              <option>February</option>
+              <option>March</option>
+              <option>April</option>
+              <option>May</option>
+              <option>June</option>
+              <option>July</option>
+              <option>August</option>
+              <option>September</option>
+              <option>October</option>
+              <option>November</option>
+              <option>December</option>
+            </select>
+          </div>
+          <input required id="again_tour_destination" input="search" class="input is-small" placeholder="Destination">
+          <button type="submit" class="button is-outlined is-link is-small">Search Tour</button>
+        </form>
+        <div class="searched-tours">
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Book Modal -->
+  <div id="bookModal" class="bok-modal">
+    <div class="bok-content">
+      
+    </div>
+  </div>
+
+  <!-- Reserve Modal -->
+  <div id="reserveModal" class="bok-modal">
+    <div class="bok-content">
+      
+    </div>
+  </div>
+
+  <!-- Sign In Modal -->
+  <div id="signInModal" class="bok-modal">
+    <div class="bok-content">
+      <div class="bok-header">
+        <h4 class="is-size-3">Sign In</h4>
+        <i onclick='closeModal()' class="fa-solid fa-x"></i>
+      </div>
+      <div class="bok-body">
+        <form class="signInForm mb-4 w-100">
+          <h4 class="is-size-6 mb-3">Email</h4>
+          <input type="email" required id="signin_email" class="input mb-2" placeholder="juan.delacruz@gmail.com">
+          <h4 class="is-size-6 mb-3 mt-4">Password</h4>
+          <input type="password" required id="signin_password" class="input mb-4" placeholder="password1234">
+          <button type='submit' class="button mt-4 is-outlined is-primary w-100">Sign In</button>
+          <button onclick="openForgotPassword()" class="button mt-4 w-100">Forgot Password</button>
+        </form>
+        <p>Don't have an account yet? <a href='#signup' onclick="openSignUpModal()">Sign Up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotPassword" class="bok-modal">
+    <div class="bok-content">
+      <div class="bok-header">
+        <h4 class="is-size-3">Forgot Password</h4>
+        <i onclick='closeModal()' class="fa-solid fa-x"></i>
+      </div>
+      <div class="bok-body">
+        <form class="forgotPasswordForm mb-4 w-100">
+          <h4 class="is-size-6 mb-3">Enter Email</h4>
+          <input type="text" required id="forgot_email" class="input mb-2" placeholder="juandelacruz@gmail.com">
+          <button type='submit' class="button mt-4 is-outlined is-primary w-100">Recover</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="signUpModal" class="bok-modal">
+    <div class="bok-content">
+      <div class="bok-header">
+        <h4 class="is-size-3">Sign Up</h4>
+        <i onclick='closeModal()' class="fa-solid fa-x"></i>
+      </div>
+      <div class="bok-body">
+        <h4 class="is-size-5 mb-4">Create an account to get started</h4>
+        <form id='signUpForm' class="mt-2 mb-4 w-100">
+          <h4 class="is-size-6 mb-3">Fullname</h4>
+          <input type="text" required id="signup_fullname" class="input mb-2" placeholder="Juan Dela Cruz">
+          <h4 class="is-size-6 mb-3 mt-4">Email</h4>
+          <input type="email" required id="signup_email" class="input mb-4" placeholder="juan.delacruz@gmail.com">
+          <button class="button mt-4 is-outlined is-primary w-100" type="submit">Sign Up</button>
+        </form>
+        <p>Already a member? <a href='#signin' onclick="openSignInModal()">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+  <!-- Header -->
+  <header>
+    <div class="col-2 brand">
+      <img src="assets/jomer-seal.png" alt="Jomer Brand">
+    </div>
+    <div class="col navigator">
+      <form id="searchTourForm">
+        <div class="select is-small">
+          <select required id="tour_month">
+            <option>January</option>
+            <option>February</option>
+            <option>March</option>
+            <option>April</option>
+            <option>May</option>
+            <option>June</option>
+            <option>July</option>
+            <option>August</option>
+            <option>September</option>
+            <option>October</option>
+            <option>November</option>
+            <option>December</option>
+          </select>
+        </div>
+        <input required id="tour_destination" input="search" class="input is-small" placeholder="Destination">
+        <button type="submit" class="button is-outlined is-link is-small">Search Tour</button>
+      </form>
+      <a href="#Home">
+        Home
+      </a>
+      <a href="#AboutUs">
+        About Us
+      </a>
+      <a href="#Tours">
+        Tours
+      </a>
+      <a href="#Gallery">
+        Gallery
+      </a>
+      <a onclick='openManageBookings()'>
+        Manage Bookings
+      </a>
+    </div>
+    <div id='account' class="col-1">
+
+    </div>
+  </header>
+  <main>
+    <section id="Home">
+      <div class="home-division">
+        <div class="tour-banner">
+          <!-- GET first tour card -->
+        </div>
+        <div class="tour-selector">
+          <h4 class="is-size-4">List of Tour Packages</h4>
+          <div class="tours">
+            <!-- GET tours -->
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="AboutUs">
+      <div class="abouts">
+        <h4 class="is-size-3">Jomer Ventures</h4>
+        <p>The Most Trusted Travel Agency in the Philippines. <strong>Jomer Ventures</strong> is proud to be an award-winning agency in
+          the Philippines. Since our founding in 2012, we have always believed travel is so much more than arriving at a
+          destination. We use our tours as a way to motivate people to realize their dreams, find beauty in the world, and have a
+          lasting, positive impact on diverse communities. Our adventurous trips include Batanes, Boracay, El- Nido, Palawan,
+          Bohol, Cebu, Coron, Siargao. Our international tours go to Hong Kong, Singapore, Malaysia, Thailand, Taiwan, South
+          Korea, Japan, Australia, the HolyLand, Europe, Egypt, Jordan, South Africa, New Zealand, Australia, Canada, Turkey, the
+          UK, and the USA. We also offer consultations for Visas and Immigration processing, Airline Reservations, Flights, Passport and Other Documentation Services.
+        </p>
+        <h4 class="is-size-4">Our Partners</h4>
+        <div class="partner-list">
+          <a target="_blank" href='https://www.airasia.com/en/gb' class="partner">
+            <img src="pictures/partners/airasia.png" alt="Air Asia">
+          </a>
+          <a target="_blank" href='https://www.cebupacificair.com/' class="partner">
+            <img src="pictures/partners/ceb.png" alt="Cebu Pacific">
+          </a>
+          <a target="_blank" href="https://www.philippineairlines.com/" class="partner">
+            <img src="pictures/partners/pal.png" alt="Philippine Airlines">
+          </a>
+        </div>
+      </div>
+    </section>
+    <section id="Tours">
+      <div class="packages">
+        <div id="packages-carousel" class="carousel slide" data-bs-ride="carousel">
+          <!-- GET carousel items -->
+        </div>
+      </div>
+    </section>
+    <section id="Gallery">
+      <div class="gallery">
+        <div class="gallery-container col-7">
+          <img src="pictures/tour-pictures/tour (1).jpg">
+          <img src="pictures/tour-pictures/tour (2).jpg">
+          <img src="pictures/tour-pictures/tour (3).jpg">
+          <img src="pictures/tour-pictures/tour (4).jpg">
+          <img src="pictures/tour-pictures/tour (5).jpg">
+          <img src="pictures/tour-pictures/tour (6).jpg">
+          <img src="pictures/tour-pictures/tour (7).jpg">
+          <img src="pictures/tour-pictures/tour (8).jpg">
+          <img src="pictures/tour-pictures/tour (9).jpg">
+          <img src="pictures/tour-pictures/tour (10).jpg">
+        </div>
+        <div class="gallery-detail col-5">
+          <h4 class="is-size-3">Testimonials</h4>
+          <div class="testimonial-list">
+            <div class="testimony">
+              <img class='col-2' src="pictures/testimonials/testimonials (1).jpg">
+              <div class="col testimony-detail">
+                <div>
+                  <h4 class="is-size-5">John Collins</h4>
+                  <span>Jan 2022</span>
+                </div>
+                <p class="is-size-6">Jomer Venture Rocks parin kahit nawala yung maleta ko sa airport hihi!! 🤘🔥</p>
+              </div>
+            </div>
+            <div class="testimony">
+              <img class='col-2' src="pictures/testimonials/testimonials (2).jpg">
+              <div class="col testimony-detail">
+                <div>
+                  <h4 class="is-size-5">Edward Levine</h4>
+                  <span>Dec 2022</span>
+                </div>
+                <p class="is-size-6">Thank you Jomer! It was a great vacation and thanks for that night 😉 I love you.. 😘</p>
+              </div>
+            </div>
+            <div class="testimony">
+              <img class='col-2' src="pictures/testimonials/testimonials (3).jpg">
+              <div class="col testimony-detail">
+                <div>
+                  <h4 class="is-size-5">Mark Joseph</h4>
+                  <span>Feb 2023</span>
+                </div>
+                <p class="is-size-6">Bente lang ang dala ko pero sulit parin sa Jomer Ventures, hays ✋😭</p>
+              </div>
+            </div>
+            <div class="testimony">
+              <img class='col-2' src="pictures/testimonials/testimonials (4).jpg">
+              <div class="col testimony-detail">
+                <div>
+                  <h4 class="is-size-5">Mary-Jean Baker Connor</h4>
+                  <span>Mar 2021</span>
+                </div>
+                <p class="is-size-6">Can't wait to see another tour package from Jomer. Labyu labyu mwuah mwuah chup chup.</p>
+              </div>
+            </div>
+          </div>
+          <a style='align-self: center;' class="button is-outlined is-link mt-4" href="//mail.google.com/mail/u/6/?ogbl#inbox?compose=new" target="_blank">Email us your testimony and travel picture</a>
+        </div>
+      </div>
+    </section>
+    <!-- <section id="ManageBooking">
+      <p>Manage Booking</p>
+    </section> -->
+  </main>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+    "name": "bokzg/eyesee",
+    "description": "Jomer Ventures",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^6.7",
+        "league/omnipay": "^3.2",
+        "omnipay/paypal": "^3.0"
+    },
+    "authors": [
+        {
+            "name": "Ariel Jericko Gacilo",
+            "email": "42305618+bokzgacilo@users.noreply.github.com"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}

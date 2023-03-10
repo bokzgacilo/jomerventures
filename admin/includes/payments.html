@@ -1,0 +1,56 @@
+<style>
+  
+</style>
+
+<main class="content-wrapper">
+  <h3>Payments</h3>
+
+  <table id="myTable" class="table table-bordered table-striped">
+    <thead>
+      <th>Payment Transaction Number</th>
+      <th>Amount</th>
+      <th>Tour Reference Number</th>
+      <th>Transaction Date</th>
+      <th>Type</th>
+      <th>Client's Name</th>
+      <th>Client's Email</th>
+    </thead>
+    <tbody class="table-body">
+      
+    </tbody>
+  </table>
+</main>
+
+<script>
+  function getAllPayments() {
+    $.ajax({
+      type: 'get',
+      url: 'api/getAllPayment.php',
+      success: (response) => {
+        $('.table-body').html(response);
+      }
+    })
+  }
+
+  function receivePayment(id){
+    $.ajax({
+      type: 'post',
+      url: 'api/updatePayment.php',
+      data: {
+        transaction: id
+      },
+      success: (response) => {
+        console.log(response)
+
+        if(response == 1){
+          alert('Payment Received');
+        }
+        getAllPayments();
+      }
+    })
+  }
+
+  $(document).ready(function(){
+    getAllPayments();
+  })
+</script>

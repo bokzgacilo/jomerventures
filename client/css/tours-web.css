@@ -1,0 +1,52 @@
+@media screen and (min-width:600px) {
+  .packages, #packages-carousel{
+    width: inherit;
+    height: inherit;
+    /* background-color: black; */
+  }
+
+  .carousel-inner, .carousel-item {
+    width: inherit;
+    height: inherit;
+  }
+
+  .carousel-item > img {
+    filter: brightness(40%);
+    object-fit: cover;
+    width: inherit;
+    height: inherit;
+  }
+
+  .carousel-caption {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+
+  .package-card {
+    align-self: center;
+    padding: 1rem;
+    width: 25vw;
+    background-color: #fff;
+    color: #000;
+  }
+
+  .package-card > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
+  }
+
+  .pc1 {
+    height: 60vh;
+    max-height: 60vh;
+    overflow: auto;
+  }
+
+  .package-card > h4 {
+    font-family: Nunito-Bold;
+    color: var(--jomerPrimary);
+  }
+}
